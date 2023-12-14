@@ -1,6 +1,5 @@
+require("dotenv").config();
 import { openAiTest01 } from "./2-LLM/open-ia/test-01";
-
-
 
 
 

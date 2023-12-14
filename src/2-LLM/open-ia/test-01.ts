@@ -12,8 +12,6 @@ import { VectorStoreRetriever } from "langchain/dist/vectorstores/base";
 import { EncycloData } from "../../1-LoadDocument/encyclo-data.model";
 import { formatDuration, intervalToDuration } from "date-fns";
 
-const OAIK = "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";
-
 
 export async function embeddingData(dbName: string, data: EncycloData[], forceCreation=false): Promise<Collection> {
     dbName = `OpenAI-${dbName}`;
@@ -21,7 +19,7 @@ export async function embeddingData(dbName: string, data: EncycloData[], forceCr
     
     // On crée le client vers la base de données vectorielle
     const client = new ChromaClient();
-    const embeddingFunction = new OpenAIEmbeddingFunction({ openai_api_key: OAIK });
+    const embeddingFunction = new OpenAIEmbeddingFunction({ openai_api_key: process.env.OAIK });
 
     // On supprime la collection si elle existe déjà pour assurer que l'étape de création fonctionne
     const collections = await client.listCollections()
@@ -70,7 +68,7 @@ export async function retriever(chromaDb: Collection) {
 
     console.log(" > Retriever d'OpenIA");
     const vectorStore = await Chroma.fromExistingCollection(
-        new OpenAIEmbeddings({ openAIApiKey: OAIK }),
+        new OpenAIEmbeddings({ openAIApiKey: process.env.OAIK }),
         { collectionName: chromaDb.name },
     );
     // console.log("\n\n====\n\n", vectorStore.similaritySearch("Abeille", 2), "\n\n")
@@ -83,7 +81,7 @@ export async function chatBot(retriever: VectorStoreRetriever) {
     console.log("Création du ChatBot")
     console.log(" > Récupération du LLM GPT 3.5")
     const llm = new ChatOpenAI({ 
-        openAIApiKey: OAIK
+        openAIApiKey: process.env.OAIK
     });
 
     // On crée le template du prompt chatBot pour conditionner l'IA et lui donner le context "data" pour répondre les questions de l'utilisateur
